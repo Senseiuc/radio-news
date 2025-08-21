@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AdController;
+use App\Models\ChatMessage;
 use App\Services\DailyService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +45,27 @@ Route::post('/calls/create', function () {
     return response()->json($room);
 })->middleware('throttle:60,1');
 
+Route::post('/meetings', function (Request $request, DailyService $daily) {
+    $room = $daily->createRoom($request->name);
+    return response()->json($room);
+});
+
+Route::get('/meetings', function (DailyService $daily) {
+    return response()->json($daily->listRooms());
+});
+
+Route::post('/daily-webhook', function (Request $request) {
+    if ($request->type === 'chat-message') {
+        ChatMessage::create([
+            'meeting_id' => $request->data['room_name'],
+            'sender_name' => $request->data['user_name'],
+            'message' => $request->data['message'],
+        ]);
+    }
+    return response()->json(['status' => 'ok']);
+});
+
+//https://yourapp.com/api/daily-webhook
 /*
 |--------------------------------------------------------------------------
 | Admin Endpoints (Filament Auth Required)

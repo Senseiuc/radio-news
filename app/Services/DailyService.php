@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Http;
 
 class DailyService
 {
-    protected string $apiKey;
-    protected string $baseUrl;
+    protected $apiKey;
+    protected $baseUrl;
 
     public function __construct()
     {
@@ -32,28 +32,22 @@ class DailyService
         ], $properties);
 
         $response = Http::withToken($this->apiKey)
-            ->post("$this->baseUrl/rooms", $payload);
+            ->post("{$this->baseUrl}/rooms", $payload);
 
         return $response->json();
     }
 
-    /**
-     * @throws ConnectionException
-     */
     public function listRooms()
     {
         return Http::withToken($this->apiKey)
-            ->get("$this->baseUrl/rooms")
+            ->get("{$this->baseUrl}/rooms")
             ->json();
     }
 
-    /**
-     * @throws ConnectionException
-     */
     public function deleteRoom($name)
     {
         return Http::withToken($this->apiKey)
-            ->delete("$this->baseUrl/rooms/$name")
+            ->delete("{$this->baseUrl}/rooms/{$name}")
             ->json();
     }
 }
