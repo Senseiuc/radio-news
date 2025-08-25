@@ -15,7 +15,11 @@
                 <tr>
                     <td class="border px-4 py-2">{{ $room['name'] }}</td>
                     <td class="border px-4 py-2">
-                        <a href="{{ $room['url'] }}" target="_blank" class="text-blue-500 underline">Join</a>
+                        <x-filament::button
+                            tag="a"
+                            href="{{ route('filament.pages.call-room', ['roomName' => $room['name']]) }}">
+                            Join
+                        </x-filament::button>
                     </td>
                     <td class="border px-4 py-2">
                         <x-filament::button color="danger" wire:click="deleteRoom('{{ $room['name'] }}')">Delete</x-filament::button>

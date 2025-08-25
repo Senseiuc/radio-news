@@ -37,6 +37,22 @@ class DailyService
         return $response->json();
     }
 
+    public function createMeetingToken($roomName, $isOwner = false)
+    {
+        $payload = [
+            'properties' => [
+                'room_name' => $roomName,
+                'is_owner' => $isOwner, // admin if true
+            ],
+        ];
+
+        $response = Http::withToken($this->apiKey)
+            ->post("{$this->baseUrl}/meeting-tokens", $payload);
+
+        return $response->json();
+    }
+
+
     public function listRooms()
     {
         return Http::withToken($this->apiKey)
