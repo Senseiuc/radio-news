@@ -29,8 +29,13 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->brandName('Homeland Radio')
+            ->brandLogo(asset('images/homeland-logo.svg'))
+            ->brandLogoHeight('2rem')
+            ->favicon(asset('images/homeland-favicon.svg'))
+            ->darkMode(false)
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Blue,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

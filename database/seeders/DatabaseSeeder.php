@@ -15,8 +15,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // 1. First, run the seeder that creates roles and permissions
-        //    This is crucial because the 'admin' role needs to exist
-        //    before you can assign it to a user.
+        //    and base taxonomy (categories)
         $this->call([
             RolePermissionSeeder::class,
             CategorySeeder::class,
@@ -39,5 +38,8 @@ class DatabaseSeeder extends Seeder
         } else {
             $this->command->error('Admin role not found. Ensure RolePermissionSeeder ran successfully. ❌');
         }
+
+        // 4. Seed demo articles with local images
+        $this->call(ArticleSeeder::class);
     }
 }

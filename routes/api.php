@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ArticleController;
 use App\Http\Controllers\Api\RadioController;
+use App\Http\Controllers\Api\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,11 +33,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('articles')->group(function () {
     Route::get('/', [ArticleController::class, 'index'])->middleware('throttle:60,1');
     Route::get('/search', [ArticleController::class, 'search'])->middleware('throttle:60,1');
+    Route::get('/trending', [ArticleController::class, 'trending'])->middleware('throttle:60,1');
+    Route::get('/featured', [ArticleController::class, 'featured'])->middleware('throttle:60,1');
     Route::get('/{article}', [ArticleController::class, 'show'])->middleware('throttle:60,1');
 });
 
 // Radio status (public)
 Route::get('/radio/status', [RadioController::class, 'status'])->middleware('throttle:60,1');
+
+// Categories (for header/nav, public)
+Route::get('/categories', [CategoryController::class, 'index'])->middleware('throttle:60,1');
 
 Route::get('/ads', [AdController::class, 'index'])->middleware('throttle:60,1');
 

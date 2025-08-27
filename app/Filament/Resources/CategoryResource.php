@@ -3,75 +3,60 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CategoryResource\Pages;
-use App\Filament\Resources\CategoryResource\RelationManagers;
 use App\Models\Category;
 use Filament\Forms;
-use Filament\Forms\Components\ColorPicker;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ColorColumn;
 
 class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-tag';
+    protected static ?string $navigationLabel = 'Categories';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('name')
+                Forms\Components\TextInput::make('name')
                     ->required()
-                    ->live(onBlur: true)
-                    ->afterStateUpdated(fn ($set, $state) => $set('slug', Str::slug($state))),
-
-                TextInput::make('slug')
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('slug')
                     ->required()
-                    ->unique(ignoreRecord: true),
-
-                ColorPicker::make('color')
-                    ->default('#6b7280')
+                    ->unique(ignoreRecord: true)
+                    ->maxLength(255),
+                Forms\Components\ColorPicker::make('color')
+                    ->required(),
+                Forms\Components\TextInput::make('sort_order')
+                    ->numeric()
+                    ->label('Sort Order')
+                    ->helperText('Lower numbers appear first. You can also drag to reorder from the list.')
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->reorderable('sort_order')
+            ->defaultSort('sort_order')
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable()
-                    ->sortable(),
-
-                Tables\Columns\ColorColumn::make('color')
-                    ->copyable(),
-
-                Tables\Columns\TextColumn::make('articles_count')
-                    ->counts('articles')
-                    ->sortable(),
-            ])
-            ->filters([
-                //
+                TextColumn::make('name')->searchable()->sortable(),
+                TextColumn::make('slug')->searchable()->sortable(),
+                ColorColumn::make('color')->label('Color'),
+                TextColumn::make('sort_order')->label('Order')->sortable(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\DeleteBulkAction::make(),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array

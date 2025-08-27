@@ -1,0 +1,200 @@
+/* === RESET === */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background: #f9f9f9;
+    color: #222;
+    line-height: 1.6;
+}
+
+/* === HEADER / NAVBAR === */
+header {
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+.navbar {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.navbar .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #d32f2f;
+    text-decoration: none;
+}
+.navbar nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+.navbar nav ul li a {
+    text-decoration: none;
+    color: #222;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+.navbar nav ul li a:hover {
+    color: #d32f2f;
+}
+
+/* === TRENDING BAR === */
+.trending {
+    background: #d32f2f;
+    color: #fff;
+    padding: 8px 20px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+}
+.trending span {
+    font-weight: bold;
+    margin-right: 10px;
+}
+.trending .marquee {
+    overflow: hidden;
+    white-space: nowrap;
+    animation: scroll 15s linear infinite;
+}
+@keyframes scroll {
+    from { transform: translateX(100%); }
+    to { transform: translateX(-100%); }
+}
+
+/* === HERO SECTION === */
+.hero {
+    max-width: 1200px;
+    margin: 20px auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+}
+.hero .main-story img {
+    width: 100%;
+    border-radius: 6px;
+}
+.hero .main-story h2 {
+    font-size: 1.8rem;
+    margin: 10px 0;
+}
+.hero .side-stories {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.hero .side-stories article {
+    display: flex;
+    gap: 10px;
+}
+.hero .side-stories img {
+    width: 100px;
+    border-radius: 4px;
+}
+
+/* === CATEGORY SECTIONS === */
+.section {
+    max-width: 1200px;
+    margin: 30px auto;
+}
+.section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    border-left: 4px solid #d32f2f;
+    padding-left: 10px;
+}
+.section .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+.section article {
+    background: #fff;
+    padding: 10px;
+    border-radius: 6px;
+    transition: transform 0.3s;
+}
+.section article:hover {
+    transform: translateY(-3px);
+}
+.section article img {
+    width: 100%;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+.section article h3 {
+    font-size: 1rem;
+}
+
+/* === VIDEO SECTION === */
+.video-section {
+    max-width: 1200px;
+    margin: 30px auto;
+}
+.video-section h2 {
+    margin-bottom: 15px;
+    border-left: 4px solid #d32f2f;
+    padding-left: 10px;
+}
+.video-wrapper {
+    display: flex;
+    gap: 20px;
+}
+.video-wrapper iframe {
+    flex: 2;
+    border-radius: 6px;
+}
+.video-wrapper .video-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.video-wrapper .video-side article {
+    display: flex;
+    gap: 10px;
+}
+.video-wrapper .video-side img {
+    width: 100px;
+    border-radius: 4px;
+}
+
+/* === FOOTER === */
+footer {
+    background: #222;
+    color: #aaa;
+    padding: 40px 20px;
+    margin-top: 40px;
+}
+footer .footer-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+footer h4 {
+    color: #fff;
+    margin-bottom: 10px;
+}
+footer a {
+    color: #aaa;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 5px;
+}
+footer a:hover {
+    color: #fff;
+}
+footer p {
+    font-size: 0.9rem;
+}

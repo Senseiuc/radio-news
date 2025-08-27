@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('chat_messages', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('meeting_id')->constrained()->onDelete('cascade');
-            $table->string('sender_name');
-            $table->text('message');
-            $table->timestamps();
-        });
+//        Schema::create('chat_messages', function (Blueprint $table) {
+//            $table->id();
+//            $table->foreignId('meeting_id')->constrained()->onDelete('cascade');
+//            $table->string('sender_name');
+//            $table->text('message');
+//            $table->timestamps();
+//        });
     }
 
     /**
