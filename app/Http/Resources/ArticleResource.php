@@ -25,7 +25,8 @@ class ArticleResource extends JsonResource
             'slug'         => $this->slug,
             'excerpt'      => str(strip_tags($this->body))->limit(150),
             'image_url'    => $img,
-            'video_url'    => $this->video_url,
+            'video_url'    => $this->video_source ?? $this->video_url,
+                        'audio_url'    => $this->audio_source,
             'published_at' => optional($this->published_at)->toDateTimeString(),
             'categories'   => $this->whenLoaded('categories', fn () => $this->categories->map(fn ($cat) => [
                 'name'  => $cat->name,

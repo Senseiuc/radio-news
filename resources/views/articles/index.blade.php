@@ -1,497 +1,143 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Articles | Homeland News Network</title>
-    <meta name="description" content="Latest articles from Homeland News Network">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+@extends('layouts.app')
 
-        body {
-            font-family: 'Roboto', sans-serif;
-            color: #333;
-            line-height: 1.6;
-            background-color: #f8f9fa;
-        }
+@section('title', ($currentCategory?->name ? $currentCategory->name.' Articles' : 'All Articles').' | Homeland News')
+@section('meta_description', $currentCategory?->name ? ('Latest '.$currentCategory->name.' articles from Homeland News.') : 'Browse the latest articles from Homeland News across politics, business, tech, sports and more.')
+@section('canonical', url()->full())
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-
-        /* Header Styles */
-        header {
-            background-color: #1a365d;
-            color: white;
-            padding: 15px 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .logo {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 28px;
-            font-weight: 700;
-            color: white;
-            text-decoration: none;
-        }
-
-        .date-display {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-        nav ul {
-            display: flex;
-            list-style: none;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 10px;
-        }
-
-        nav li {
-            margin-right: 25px;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 16px;
-            transition: opacity 0.3s;
-        }
-
-        nav a:hover {
-            opacity: 0.8;
-        }
-
-        /* Main Content */
-        .main-content {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 30px;
-            margin: 30px 0;
-        }
-
-        /* Article Cards */
-        .article-card {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            margin-bottom: 25px;
-            transition: transform 0.3s;
-        }
-
-        .article-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .article-content {
-            padding: 20px;
-        }
-
-        .article-meta {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 14px;
-            color: #666;
-        }
-
-        .article-author {
-            font-weight: 500;
-            color: #2c5282;
-        }
-
-        .article-date {
-            color: #718096;
-        }
-
-        .article-title {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 20px;
-            margin-bottom: 10px;
-            color: #2d3748;
-        }
-
-        .article-excerpt {
-            color: #4a5568;
-            margin-bottom: 15px;
-        }
-
-        .read-more {
-            display: inline-block;
-            color: #2c5282;
-            font-weight: 500;
-            text-decoration: none;
-        }
-
-        .read-more:hover {
-            text-decoration: underline;
-        }
-
-        /* Section Headers */
-        .section-header {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 24px;
-            font-weight: 700;
-            margin: 40px 0 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #e2e8f0;
-            color: #2d3748;
-        }
-
-        /* Breaking News */
-        .breaking-news {
-            background: linear-gradient(to right, #c53030, #e53e3e);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 6px;
-            margin: 20px 0;
-            display: flex;
-            align-items: center;
-        }
-
-        .breaking-label {
-            background: white;
-            color: #c53030;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-weight: 700;
-            margin-right: 15px;
-            font-size: 14px;
-        }
-
-        /* Sidebar */
-        .sidebar-widget {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-
-        .widget-title {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: #2d3748;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .trending-list {
-            list-style: none;
-        }
-
-        .trending-item {
-            padding: 10px 0;
-            border-bottom: 1px solid #edf2f7;
-        }
-
-        .trending-item:last-child {
-            border-bottom: none;
-        }
-
-        .trending-link {
-            color: #4a5568;
-            text-decoration: none;
-            font-weight: 500;
-            display: block;
-        }
-
-        .trending-link:hover {
-            color: #2c5282;
-        }
-
-        /* Footer */
-        footer {
-            background: #1a202c;
-            color: white;
-            padding: 40px 0;
-            margin-top: 50px;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 30px;
-        }
-
-        .footer-column h3 {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 18px;
-            margin-bottom: 20px;
-            color: #e2e8f0;
-        }
-
-        .footer-links {
-            list-style: none;
-        }
-
-        .footer-links li {
-            margin-bottom: 10px;
-        }
-
-        .footer-links a {
-            color: #a0aec0;
-            text-decoration: none;
-        }
-
-        .footer-links a:hover {
-            color: white;
-        }
-
-        .copyright {
-            text-align: center;
-            margin-top: 40px;
-            color: #718096;
-            font-size: 14px;
-        }
-
-        /* Responsive */
-        @media (max-width: 992px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-
-            .footer-content {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 576px) {
-            nav ul {
-                flex-wrap: wrap;
-            }
-
-            nav li {
-                margin-bottom: 10px;
-            }
-
-            .footer-content {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-<header>
-    <div class="container">
-        <div class="header-top">
-            <a href="#" class="logo">HOMELAND NEWS</a>
-            <div class="date-display">Tuesday, August 26, 2025</div>
+@section('content')
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-2xl font-extrabold tracking-tight">
+                {{ $currentCategory?->name ? $currentCategory->name : 'All Articles' }}
+            </h1>
+            @if($currentCategory)
+                <a href="{{ route('articles.index') }}" class="text-sm text-blue-700 hover:underline">Clear filter</a>
+            @endif
         </div>
-        <nav>
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">World</a></li>
-                <li><a href="#">Politics</a></li>
-                <li><a href="#">Business</a></li>
-                <li><a href="#">Africa</a></li>
-                <li><a href="#">Sports</a></li>
-                <li><a href="#">Entertainment</a></li>
-                <li><a href="#">Health</a></li>
-            </ul>
-        </nav>
+
+        @if($articles->count() === 0)
+            <div class="bg-white border border-gray-200 rounded-lg p-6 text-gray-600">No articles found.</div>
+        @else
+            <!-- Top 3: full-width row that pushes the sidebar down -->
+            @php
+                $topThree = $articles->slice(0, 3);
+                $rest = $articles->slice(3);
+            @endphp
+            @if($topThree->count() > 0)
+                <div class="mb-8">
+                    {{-- Index Top Ad --}}
+                    @include('partials.ad-slot', ['placement' => 'index-top'])
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach($topThree as $article)
+                            @php
+                                $img = $article->image_url ? (preg_match('/^https?:\/\//i',$article->image_url) ? $article->image_url : asset(ltrim($article->image_url,'/'))) : 'https://via.placeholder.com/640x360';
+                                $author = optional($article->author)->name;
+                            @endphp
+                            <article class="relative rounded-lg shadow hover:shadow-md transition overflow-hidden group h-52 sm:h-60">
+                                <a href="/articles/{{ $article->slug }}" class="block w-full h-full">
+                                    <img src="{{ $img }}" alt="{{ $article->title }}" class="absolute inset-0 w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors"></div>
+                                    <div class="absolute inset-x-0 bottom-0 p-4 text-white">
+                                        <h3 class="font-bold text-lg leading-snug line-clamp-2">{{ $article->title }}</h3>
+                                        <p class="mt-1 text-[12px] opacity-90">{{ $author ? 'By ' . $author : 'By Unknown' }}</p>
+                                    </div>
+                                </a>
+                            </article>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <!-- Main content -->
+                <div class="lg:col-span-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                        @foreach($rest as $article)
+                            @php
+                                $img = $article->image_url ? (preg_match('/^https?:\/\//i',$article->image_url) ? $article->image_url : asset(ltrim($article->image_url,'/'))) : 'https://via.placeholder.com/640x360';
+                                $author = optional($article->author)->name;
+                            @endphp
+                            <!-- Others: standard cards with excerpts -->
+                            <article class="bg-white rounded-lg shadow hover:shadow-md transition overflow-hidden">
+                                <a href="/articles/{{ $article->slug }}" class="block">
+                                    <div class="relative h-44">
+                                        <img src="{{ $img }}"
+                                             alt="{{ $article->title }}"
+                                             class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="p-4">
+                                        <h3 class="font-semibold text-base leading-snug line-clamp-2">{{ $article->title }}</h3>
+                                        <div class="mt-2 text-[11px] text-gray-500 flex items-center justify-between">
+                                            <span class="truncate">{{ $author ? 'By ' . $author : 'By Unknown' }}</span>
+                                            <span class="ml-2 shrink-0">{{ optional($article->published_at)->format('M j, Y') }}</span>
+                                        </div>
+                                        @if($article->excerpt)
+                                            <p class="mt-2 text-sm text-gray-700 line-clamp-3">{{ \Illuminate\Support\Str::limit(strip_tags($article->excerpt), 160) }}</p>
+                                        @endif
+                                    </div>
+                                </a>
+                            </article>
+                        @endforeach
+                    </div>
+
+                    <div class="mt-8">
+                        {{ $articles->links() }}
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <aside class="lg:col-span-1 space-y-8">
+                    {{-- Sidebar Ad --}}
+                    @include('partials.ad-slot', ['placement' => 'sidebar'])
+                    <!-- Recent Posts -->
+                    <section class="bg-white rounded-lg shadow border border-gray-100">
+                        <div class="px-5 py-4 border-b">
+                            <h2 class="text-lg font-bold">Recent Posts</h2>
+                        </div>
+                        <ul class="divide-y">
+                            @foreach(($recentPosts ?? collect()) as $post)
+                                <li>
+                                    <a href="/articles/{{ $post->slug }}" class="block px-5 py-3 hover:bg-gray-50">
+                                        <div class="text-sm font-medium text-gray-900 line-clamp-2">{{ $post->title }}</div>
+                                    </a>
+                                </li>
+                            @endforeach
+                            @if(($recentPosts ?? collect())->isEmpty())
+                                <li class="px-5 py-3 text-sm text-gray-500">No recent posts.</li>
+                            @endif
+                        </ul>
+                    </section>
+
+                    <!-- Social Feed -->
+                    <section class="bg-white rounded-lg shadow border border-gray-100 p-5">
+                        <h2 class="text-lg font-bold mb-3">Social Feed</h2>
+                        <p class="text-sm text-gray-600 mb-4">Follow us for updates</p>
+                        <div class="flex flex-wrap gap-2">
+                            <a href="{{ $siteSettings->facebook_url ?? '#' }}" class="bg-blue-700 text-white py-1.5 px-3 rounded" aria-label="Facebook" target="_blank" rel="noopener"><i class="fab fa-facebook-f"></i></a>
+                            <a href="{{ $siteSettings->twitter_url ?? '#' }}" class="bg-sky-500 text-white py-1.5 px-3 rounded" aria-label="Twitter/X" target="_blank" rel="noopener"><i class="fab fa-twitter"></i></a>
+                            <a href="{{ $siteSettings->instagram_url ?? '#' }}" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white py-1.5 px-3 rounded" aria-label="Instagram" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+                            <a href="{{ $siteSettings->youtube_url ?? '#' }}" class="bg-red-600 text-white py-1.5 px-3 rounded" aria-label="YouTube" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
+                            <a href="{{ $siteSettings->linkedin_url ?? '#' }}" class="bg-blue-800 text-white py-1.5 px-3 rounded" aria-label="LinkedIn" target="_blank" rel="noopener"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="{{ $siteSettings->tiktok_url ?? '#' }}" class="bg-pink-600 text-white py-1.5 px-3 rounded" aria-label="TikTok" target="_blank" rel="noopener"><i class="fab fa-tiktok"></i></a>
+                        </div>
+                    </section>
+
+                    <!-- Newsletter -->
+                    <section class="bg-white rounded-lg shadow border border-gray-100 p-5">
+                        <h2 class="text-lg font-bold mb-2">Newsletter</h2>
+                        <p class="text-sm text-gray-600 mb-4">Get the latest news in your inbox.</p>
+                        @if(session('newsletter_status'))
+                            <div class="mb-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded p-3">{{ session('newsletter_status') }}</div>
+                        @endif
+                        <form method="post" action="{{ route('newsletter.store') }}">
+                            @csrf
+                            <label for="newsletter-email" class="sr-only">Email address</label>
+                            <input id="newsletter-email" name="email" type="email" required placeholder="Your email address" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button type="submit" class="mt-3 w-full bg-blue-700 text-white py-2 rounded-md">Subscribe</button>
+                        </form>
+                    </section>
+                </aside>
+            </div>
+        @endif
     </div>
-</header>
-
-<div class="container">
-    <div class="breaking-news">
-        <span class="breaking-label">BREAKING</span>
-        <span>Four Journalists Missing After Clashes in Eastern DR Congo</span>
-    </div>
-
-    <div class="main-content">
-        <div class="content-primary">
-            <h2 class="section-header">TRENDING NOW</h2>
-
-            <div class="article-card">
-                <div class="article-content">
-                    <div class="article-meta">
-                        <span class="article-author">by Olawunmi Sola-Otegbade</span>
-                        <span class="article-date">August 26, 2025</span>
-                    </div>
-                    <h3 class="article-title">DR Congo: M23 Rebels Resume Peace Talks in Qatar Amid Renewed Violence</h3>
-                    <p class="article-excerpt">Peace talks between the Congolese government and M23 rebels have resumed in Doha despite ongoing violence in the eastern regions of the country. International mediators are pushing for a ceasefire.</p>
-                    <a href="#" class="read-more">Read more →</a>
-                </div>
-            </div>
-
-            <div class="article-card">
-                <div class="article-content">
-                    <div class="article-meta">
-                        <span class="article-author">by Olawunmi Sola-Otegbade</span>
-                        <span class="article-date">August 26, 2025</span>
-                    </div>
-                    <h3 class="article-title">Lili Nats X Faces Felony Charges After Naked Confrontation With Los Angeles Police</h3>
-                    <p class="article-excerpt">Controversial musician Lili Nats X could face felony charges following a bizarre incident where she confronted LAPD officers while completely nude, allegedly obstructing justice.</p>
-                    <a href="#" class="read-more">Read more →</a>
-                </div>
-            </div>
-
-            <div class="article-card">
-                <div class="article-content">
-                    <div class="article-meta">
-                        <span class="article-author">by Olawunmi Sola-Otegbade</span>
-                        <span class="article-date">August 26, 2025</span>
-                    </div>
-                    <h3 class="article-title">Likely Source of Legionnaires' Disease Identified in London, Ontario as Outbreak Redeclared</h3>
-                    <p class="article-excerpt">Health officials in London, Ontario have identified the likely source of a Legionnaires' disease outbreak that has sickened multiple residents. The outbreak has been officially redeclared as cases continue to emerge.</p>
-                    <a href="#" class="read-more">Read more →</a>
-                </div>
-            </div>
-
-            <h2 class="section-header">BUSINESS</h2>
-
-            <div class="article-card">
-                <div class="article-content">
-                    <div class="article-meta">
-                        <span class="article-author">by Olawunmi Sola-Otegbade</span>
-                        <span class="article-date">August 26, 2025</span>
-                    </div>
-                    <h3 class="article-title">Bank of Canada Targets Flexibility in Rate-Setting Framework Review, Says Macklem</h3>
-                    <p class="article-excerpt">Bank of Canada Governor Tiff Macklem emphasized the need for flexibility as the central bank reviews its monetary policy framework. The review comes amid changing economic conditions.</p>
-                    <a href="#" class="read-more">Read more →</a>
-                </div>
-            </div>
-
-            <h2 class="section-header">AFRICA</h2>
-
-            <div class="article-card">
-                <div class="article-content">
-                    <div class="article-meta">
-                        <span class="article-author">by Nesta Sami</span>
-                        <span class="article-date">August 26, 2025</span>
-                    </div>
-                    <h3 class="article-title">(VIDEO) Former Kwara First Lady Fights Cancer With New Movie</h3>
-                    <p class="article-excerpt">The former First Lady of Kwara State is using film as a medium to raise awareness about cancer prevention and treatment, drawing from her personal experience with the disease.</p>
-                    <a href="#" class="read-more">Read more →</a>
-                </div>
-            </div>
-
-            <div class="article-card">
-                <div class="article-content">
-                    <div class="article-meta">
-                        <span class="article-author">by Chukwudi Ogama</span>
-                        <span class="article-date">August 26, 2025</span>
-                    </div>
-                    <h3 class="article-title">Five Killed, Parliament Set Ablaze In Kenya Tax Protests</h3>
-                    <p class="article-excerpt">Violent protests against proposed tax increases have rocked Kenya, resulting in five fatalities and parts of the parliament building being set on fire by demonstrators.</p>
-                    <a href="#" class="read-more">Read more →</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="sidebar">
-            <div class="sidebar-widget">
-                <h3 class="widget-title">TRENDING</h3>
-                <ul class="trending-list">
-                    <li class="trending-item"><a href="#" class="trending-link">Spotify Revives Messaging Feature to Boost User Growth</a></li>
-                    <li class="trending-item"><a href="#" class="trending-link">Trump's Flag Burning Order Could Push Case to Supreme Court</a></li>
-                    <li class="trending-item"><a href="#" class="trending-link">Canadian Athletes Frustrated Over SRY Gene Testing Chaos</a></li>
-                    <li class="trending-item"><a href="#" class="trending-link">Tropical Storm Strikes Vietnam, Leaves 3 Dead and Soaks Region</a></li>
-                    <li class="trending-item"><a href="#" class="trending-link">Australia Expels Iranian Ambassador Over Alleged Antisemitic Remarks</a></li>
-                </ul>
-            </div>
-
-            <div class="sidebar-widget">
-                <h3 class="widget-title">RECENT</h3>
-                <ul class="trending-list">
-                    <li class="trending-item"><a href="#" class="trending-link">Norway's Prime Minister Visits Ukraine as President Seeks Support</a></li>
-                    <li class="trending-item"><a href="#" class="trending-link">Canada Strengthens Energy Partnership with Germany</a></li>
-                    <li class="trending-item"><a href="#" class="trending-link">Trump Honors Fallen U.S. Service Members, Criticizes Biden</a></li>
-                    <li class="trending-item"><a href="#" class="trending-link">LeBlanc and Lunick to Meet as Canada Seeks Border Solutions</a></li>
-                    <li class="trending-item"><a href="#" class="trending-link">President Trump Announces U.S. Deal for 10% Tariff Reduction</a></li>
-                </ul>
-            </div>
-
-            <div class="sidebar-widget">
-                <h3 class="widget-title">EVENTS</h3>
-                <ul class="trending-list">
-                    <li class="trending-item"><a href="#" class="trending-link">Winnipeg's African Communities Gather for 6th Annual Festival</a></li>
-                    <li class="trending-item"><a href="#" class="trending-link">Kara Magazine Launched to Empower Young African-Canadians</a></li>
-                    <li class="trending-item"><a href="#" class="trending-link">Ascot Racecourse Sees Unprecedented Demand for Summer Packages</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-
-<footer>
-    <div class="container">
-        <div class="footer-content">
-            <div class="footer-column">
-                <h3>About Us</h3>
-                <ul class="footer-links">
-                    <li><a href="#">Our Story</a></li>
-                    <li><a href="#">Editorial Team</a></li>
-                    <li><a href="#">Ethics Policy</a></li>
-                    <li><a href="#">Careers</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-column">
-                <h3>Sections</h3>
-                <ul class="footer-links">
-                    <li><a href="#">World News</a></li>
-                    <li><a href="#">Politics</a></li>
-                    <li><a href="#">Business</a></li>
-                    <li><a href="#">Africa</a></li>
-                    <li><a href="#">Entertainment</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-column">
-                <h3>Connect</h3>
-                <ul class="footer-links">
-                    <li><a href="#">Contact Us</a></li>
-                    <li><a href="#">Subscribe</a></li>
-                    <li><a href="#">Newsletter</a></li>
-                    <li><a href="#">Social Media</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-column">
-                <h3>Legal</h3>
-                <ul class="footer-links">
-                    <li><a href="#">Terms of Service</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Cookie Policy</a></li>
-                    <li><a href="#">GDPR</a></li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="copyright">
-            &copy; 2025 Homeland News Network. All rights reserved.
-        </div>
-    </div>
-</footer>
-
-<script>
-    // Update date display with current date
-    document.addEventListener('DOMContentLoaded', function() {
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        const today = new Date().toLocaleDateString('en-US', options);
-        document.querySelector('.date-display').textContent = today;
-    });
-</script>
-</body>
-</html>
+@endsection

@@ -21,14 +21,26 @@ class ArticleController extends Controller
         $sliderCount = max(1, min(10, $sliderCount));
         $sideCount   = max(0, min(12, $sideCount));
 
-        $query = Article::query()
+        $featuredQuery = Article::query()
             ->published()
             ->where('is_featured', true)
             ->with(['author:id,name', 'categories:id,name'])
             ->latest('published_at')
             ->select(['id','title','slug','image_url','published_at','author_id']);
 
-        $all = $query->take($sliderCount + $sideCount)->get();
+        $featuredItems = $featuredQuery->take($sliderCount)->get();
+
+        $featuredIds = $featuredItems->pluck('id');
+
+        $topQuery = Article::query()
+            ->published()
+            ->where('is_top', true)
+            ->whereNotIn('id', $featuredIds)
+            ->with(['author:id,name', 'categories:id,name'])
+            ->latest('published_at')
+            ->select(['id','title','slug','image_url','published_at','author_id']);
+
+        $topItems = $topQuery->take($sideCount)->get();
 
         $mapItem = function (Article $a) {
             $img = $a->image_url;
@@ -46,8 +58,8 @@ class ArticleController extends Controller
             ];
         };
 
-        $featured = $all->take($sliderCount)->map($mapItem)->values();
-        $top      = $all->slice($sliderCount)->take($sideCount)->map($mapItem)->values();
+        $featured = $featuredItems->map($mapItem)->values();
+        $top      = $topItems->map($mapItem)->values();
 
         return response()->json([
             'featured' => $featured,

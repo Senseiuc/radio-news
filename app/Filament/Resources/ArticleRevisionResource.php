@@ -15,7 +15,7 @@ class ArticleRevisionResource extends Resource
     protected static ?string $model = ArticleRevision::class;
     protected static ?string $navigationIcon = 'heroicon-o-clock';
     protected static ?string $navigationGroup = 'Content';
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
     {

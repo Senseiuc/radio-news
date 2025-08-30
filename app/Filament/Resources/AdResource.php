@@ -21,6 +21,8 @@ class AdResource extends Resource
     protected static ?string $model = Ad::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Monetization';
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
@@ -37,8 +39,17 @@ class AdResource extends Resource
                     'custom' => 'Custom (Raw HTML/JS)',
                 ])
                 ->required(),
-            TextInput::make('placement')
-                ->placeholder('e.g. header, sidebar, footer'),
+            Select::make('placement')
+                ->label('Placement')
+                ->options(Ad::PLACEMENTS)
+                ->searchable()
+                ->allowHtml()
+                ->native(false)
+                ->hint('Standard keys: ' . implode(', ', array_keys(Ad::PLACEMENTS)))
+                ->helperText('Choose a standard placement. You may also type a custom key if you plan to render it in code.')
+                ->required()
+                ->columnSpanFull()
+                ->hintIcon('heroicon-o-information-circle'),
             Toggle::make('is_active')
                 ->label('Active')
                 ->default(true),

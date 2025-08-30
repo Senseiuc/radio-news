@@ -20,7 +20,7 @@ class ArticleFactory extends Factory
             'image_url' => '/images/articles/placeholder-1.svg',
             'video_url' => null,
             'is_featured' => fake()->boolean(20),
-            'is_breaking' => fake()->boolean(10),
+            'is_top' => fake()->boolean(20),
             'is_trending' => fake()->boolean(15),
             'author_id' => User::factory(),
         ];

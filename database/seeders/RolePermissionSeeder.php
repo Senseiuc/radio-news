@@ -47,26 +47,33 @@ class RolePermissionSeeder extends Seeder
         }
 
         // Create roles and assign permissions
-        $admin = Role::create(['name' => 'admin'])
+        $admin = Role::firstOrCreate(['name' => 'admin'])
             ->givePermissionTo(Permission::all());
 
-        Role::create(['name' => 'editor'])
+        // Editor: can create & update articles, but cannot publish
+        $editor = Role::firstOrCreate(['name' => 'editor'])
+            ->givePermissionTo([
+                'viewAny articles',
+                'view articles',
+                'create articles',
+                'update articles',
+            ]);
+
+        // Publisher: can create, update and publish
+        $publisher = Role::firstOrCreate(['name' => 'publisher'])
             ->givePermissionTo([
                 'viewAny articles',
                 'view articles',
                 'create articles',
                 'update articles',
                 'publish articles',
-                'viewAny users',
-                'view users',
             ]);
 
-        Role::create(['name' => 'reporter'])
+        // Regular user role: read-only
+        $user = Role::firstOrCreate(['name' => 'user'])
             ->givePermissionTo([
                 'viewAny articles',
                 'view articles',
-                'create articles',
-                'update articles',
             ]);
     }
 }

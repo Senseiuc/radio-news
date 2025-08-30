@@ -30,7 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->brandName('Homeland Radio')
-            ->brandLogo(asset('images/homeland-logo.svg'))
+            ->brandLogo(asset('images/homeland_logo.png'))
             ->brandLogoHeight('2rem')
             ->favicon(asset('images/homeland-favicon.svg'))
             ->darkMode(false)

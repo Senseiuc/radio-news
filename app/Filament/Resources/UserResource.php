@@ -78,6 +78,7 @@ class UserResource extends Resource
                     ->color(fn (string $state) => match($state) {
                         'admin' => 'danger',
                         'editor' => 'warning',
+                        'publisher' => 'success',
                         default => 'primary'
                     }),
 
