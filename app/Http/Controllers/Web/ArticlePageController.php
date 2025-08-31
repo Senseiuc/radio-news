@@ -30,12 +30,19 @@ class ArticlePageController extends Controller
         $articles = $query->paginate(12)->withQueryString();
 
         // Recent posts for sidebar (titles only)
-        $recentPosts = Article::query()
+        $recentPostsQuery = Article::query()
             ->published()
             ->latest('published_at')
-            ->select(['id','title','slug','published_at'])
-            ->take(8)
-            ->get();
+            ->select(['id','title','slug','published_at']);
+
+        // When filtering by category, keep recent posts within the same category
+        if ($currentCategory) {
+            $recentPostsQuery->whereHas('categories', function ($q) use ($categorySlug) {
+                $q->where('slug', $categorySlug);
+            });
+        }
+
+        $recentPosts = $recentPostsQuery->take(8)->get();
 
         return view('articles.index', [
             'articles' => $articles,

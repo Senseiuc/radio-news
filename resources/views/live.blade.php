@@ -7,8 +7,12 @@
 @section('content')
     <div class="container mx-auto px-4 py-6">
         <h1 class="text-2xl font-bold mb-4 flex items-center gap-2">
-            <span class="inline-block w-2 h-2 bg-red-600 rounded-full animate-ping"></span>
-            <span class="inline-flex items-center gap-2 text-red-700 bg-red-50 border border-red-200 font-semibold text-xs px-2.5 py-1 rounded-full">LIVE</span>
+            @php($yt = optional($siteSettings)->youtube_live_url ?? null)
+            @php($fb = optional($siteSettings)->facebook_live_url ?? null)
+            @if(!empty($yt) || !empty($fb))
+                <span class="inline-block w-2 h-2 bg-red-600 rounded-full animate-ping"></span>
+                <span class="inline-flex items-center gap-2 text-red-700 bg-red-50 border border-red-200 font-semibold text-xs px-2.5 py-1 rounded-full">LIVE</span>
+            @endif
             <span>Live Stream</span>
         </h1>
     </div>

@@ -18,72 +18,125 @@
         @if($articles->count() === 0)
             <div class="bg-white border border-gray-200 rounded-lg p-6 text-gray-600">No articles found.</div>
         @else
-            <!-- Top 3: full-width row that pushes the sidebar down -->
             @php
-                $topThree = $articles->slice(0, 3);
-                $rest = $articles->slice(3);
+                $collection = ($articles instanceof \Illuminate\Pagination\LengthAwarePaginator || $articles instanceof \Illuminate\Pagination\Paginator)
+                    ? $articles->getCollection()
+                    : collect($articles);
             @endphp
-            @if($topThree->count() > 0)
-                <div class="mb-8">
-                    {{-- Index Top Ad --}}
-                    @include('partials.ad-slot', ['placement' => 'index-top'])
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        @foreach($topThree as $article)
-                            @php
-                                $img = $article->image_url ? (preg_match('/^https?:\/\//i',$article->image_url) ? $article->image_url : asset(ltrim($article->image_url,'/'))) : 'https://via.placeholder.com/640x360';
-                                $author = optional($article->author)->name;
-                            @endphp
-                            <article class="relative rounded-lg shadow hover:shadow-md transition overflow-hidden group h-52 sm:h-60">
-                                <a href="/articles/{{ $article->slug }}" class="block w-full h-full">
-                                    <img src="{{ $img }}" alt="{{ $article->title }}" class="absolute inset-0 w-full h-full object-cover">
-                                    <div class="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors"></div>
-                                    <div class="absolute inset-x-0 bottom-0 p-4 text-white">
-                                        <h3 class="font-bold text-lg leading-snug line-clamp-2">{{ $article->title }}</h3>
-                                        <p class="mt-1 text-[12px] opacity-90">{{ $author ? 'By ' . $author : 'By Unknown' }}</p>
-                                    </div>
-                                </a>
-                            </article>
-                        @endforeach
+
+            @if($currentCategory)
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                    <div class="lg:col-span-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                            @foreach($collection as $article)
+                                @php
+                                    $img = $article->image_url ? (preg_match('/^https?:\/\//i',$article->image_url) ? $article->image_url : asset(ltrim($article->image_url,'/'))) : 'https://via.placeholder.com/640x360';
+                                    $author = optional($article->author)->name;
+                                @endphp
+                                <article class="bg-white rounded-lg shadow hover:shadow-md transition overflow-hidden">
+                                    <a href="/articles/{{ $article->slug }}" class="block">
+                                        <div class="relative h-44">
+                                            <img src="{{ $img }}" alt="{{ $article->title }}" class="w-full h-full object-cover">
+                                        </div>
+                                        <div class="p-4">
+                                            <h3 class="font-semibold text-base leading-snug line-clamp-2">{{ $article->title }}</h3>
+                                            <div class="mt-2 text-[11px] text-gray-500 flex items-center justify-between">
+                                                <span class="truncate">{{ $author ? 'By ' . $author : 'By Unknown' }}</span>
+                                                <span class="ml-2 shrink-0">{{ optional($article->published_at)->format('M j, Y') }}</span>
+                                            </div>
+                                            @if($article->excerpt)
+                                                <p class="mt-2 text-sm text-gray-700 line-clamp-3">{{ \Illuminate\Support\Str::limit(strip_tags($article->excerpt), 160) }}</p>
+                                            @endif
+                                        </div>
+                                    </a>
+                                </article>
+                            @endforeach
+                        </div>
+                        <div class="mt-8">
+                            {{ $articles->links() }}
+                        </div>
                     </div>
+                    <!-- Sidebar -->
+                    <aside class="lg:col-span-1 space-y-8">
+                        @include('partials.ad-slot', ['placement' => 'sidebar'])
+                        @include('partials._recent_posts')
+                    </aside>
+                </div>
+            @else
+                <!-- Top 3: full-width row that pushes the sidebar down -->
+                @php
+                    $topThree = $collection->take(3);
+                    $rest = $collection->slice(3);
+                @endphp
+                @if($topThree->count() > 0)
+                    <div class="mb-8">
+                        @include('partials.ad-slot', ['placement' => 'index-top'])
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            @foreach($topThree as $article)
+                                @php
+                                    $img = $article->image_url ? (preg_match('/^https?:\/\//i',$article->image_url) ? $article->image_url : asset(ltrim($article->image_url,'/'))) : 'https://via.placeholder.com/640x360';
+                                    $author = optional($article->author)->name;
+                                @endphp
+                                <article class="relative rounded-lg shadow hover:shadow-md transition overflow-hidden group h-52 sm:h-60">
+                                    <a href="/articles/{{ $article->slug }}" class="block w-full h-full">
+                                        <img src="{{ $img }}" alt="{{ $article->title }}" class="absolute inset-0 w-full h-full object-cover">
+                                        <div class="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors"></div>
+                                        <div class="absolute inset-x-0 bottom-0 p-4 text-white">
+                                            <h3 class="font-bold text-lg leading-snug line-clamp-2">{{ $article->title }}</h3>
+                                            <p class="mt-1 text-[12px] opacity-90">{{ $author ? 'By ' . $author : 'By Unknown' }}</p>
+                                        </div>
+                                    </a>
+                                </article>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                    <!-- Main content -->
+                    <div class="lg:col-span-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                            @foreach($rest as $article)
+                                @php
+                                    $img = $article->image_url ? (preg_match('/^https?:\/\//i',$article->image_url) ? $article->image_url : asset(ltrim($article->image_url,'/'))) : 'https://via.placeholder.com/640x360';
+                                    $author = optional($article->author)->name;
+                                @endphp
+                                <!-- Others: standard cards with excerpts -->
+                                <article class="bg-white rounded-lg shadow hover:shadow-md transition overflow-hidden">
+                                    <a href="/articles/{{ $article->slug }}" class="block">
+                                        <div class="relative h-44">
+                                            <img src="{{ $img }}"
+                                                 alt="{{ $article->title }}"
+                                                 class="w-full h-full object-cover">
+                                        </div>
+                                        <div class="p-4">
+                                            <h3 class="font-semibold text-base leading-snug line-clamp-2">{{ $article->title }}</h3>
+                                            <div class="mt-2 text-[11px] text-gray-500 flex items-center justify-between">
+                                                <span class="truncate">{{ $author ? 'By ' . $author : 'By Unknown' }}</span>
+                                                <span class="ml-2 shrink-0">{{ optional($article->published_at)->format('M j, Y') }}</span>
+                                            </div>
+                                            @if($article->excerpt)
+                                                <p class="mt-2 text-sm text-gray-700 line-clamp-3">{{ \Illuminate\Support\Str::limit(strip_tags($article->excerpt), 160) }}</p>
+                                            @endif
+                                        </div>
+                                    </a>
+                                </article>
+                            @endforeach
+                        </div>
+
+                        <div class="mt-8">
+                            {{ $articles->links() }}
+                        </div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <aside class="lg:col-span-1 space-y-8">
+                        {{-- Sidebar Ad --}}
+                        @include('partials.ad-slot', ['placement' => 'sidebar'])
+                        @include('partials._recent_posts')
+                    </aside>
                 </div>
             @endif
-
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                <!-- Main content -->
-                <div class="lg:col-span-3">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                        @foreach($rest as $article)
-                            @php
-                                $img = $article->image_url ? (preg_match('/^https?:\/\//i',$article->image_url) ? $article->image_url : asset(ltrim($article->image_url,'/'))) : 'https://via.placeholder.com/640x360';
-                                $author = optional($article->author)->name;
-                            @endphp
-                            <!-- Others: standard cards with excerpts -->
-                            <article class="bg-white rounded-lg shadow hover:shadow-md transition overflow-hidden">
-                                <a href="/articles/{{ $article->slug }}" class="block">
-                                    <div class="relative h-44">
-                                        <img src="{{ $img }}"
-                                             alt="{{ $article->title }}"
-                                             class="w-full h-full object-cover">
-                                    </div>
-                                    <div class="p-4">
-                                        <h3 class="font-semibold text-base leading-snug line-clamp-2">{{ $article->title }}</h3>
-                                        <div class="mt-2 text-[11px] text-gray-500 flex items-center justify-between">
-                                            <span class="truncate">{{ $author ? 'By ' . $author : 'By Unknown' }}</span>
-                                            <span class="ml-2 shrink-0">{{ optional($article->published_at)->format('M j, Y') }}</span>
-                                        </div>
-                                        @if($article->excerpt)
-                                            <p class="mt-2 text-sm text-gray-700 line-clamp-3">{{ \Illuminate\Support\Str::limit(strip_tags($article->excerpt), 160) }}</p>
-                                        @endif
-                                    </div>
-                                </a>
-                            </article>
-                        @endforeach
-                    </div>
-
-                    <div class="mt-8">
-                        {{ $articles->links() }}
-                    </div>
-                </div>
 
                 <!-- Sidebar -->
                 <aside class="lg:col-span-1 space-y-8">

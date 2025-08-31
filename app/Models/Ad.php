@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Ad extends Model
 {
+    use HasFactory;
+
     public const PLACEMENTS = [
         'header' => 'Header (below trending bar)',
         'home-inline' => 'Home – Inline (between hero and categories)',

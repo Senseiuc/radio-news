@@ -3,9 +3,22 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SiteSetting extends Model
 {
+    use HasFactory;
+
+    protected static function booted(): void
+    {
+        static::saved(function () {
+            \Cache::forget('site_settings');
+        });
+        static::deleted(function () {
+            \Cache::forget('site_settings');
+        });
+    }
+
     protected $fillable = [
         'facebook_url',
         'twitter_url',
