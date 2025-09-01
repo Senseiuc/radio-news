@@ -26,7 +26,7 @@ class ArticleSeeder extends Seeder
         $categories = Category::query()->pluck('id')->all();
 
         Article::factory()
-            ->count(20)
+            ->count(600)
             ->make()
             ->each(function ($article, $i) use ($author, $images, $categories) {
                 $article->author_id = $author->id;
@@ -41,6 +41,6 @@ class ArticleSeeder extends Seeder
                 }
             });
 
-        $this->command->info('Seeded 20 articles with local images. ✅');
+        $this->command->info('Seeded 600 articles with local images. ✅');
     }
 }
