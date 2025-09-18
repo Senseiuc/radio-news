@@ -49,5 +49,6 @@ class AppServiceProvider extends ServiceProvider
                  ->with('adsByPlacement', $adsByPlacement)
                  ->with('adsenseClient', $adsenseClient);
         });
+        Schema::defaultStringLength(191);
     }
 }

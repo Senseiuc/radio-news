@@ -22,8 +22,10 @@
     <meta name="twitter:image" content="@yield('twitter_image', asset('images/homeland_logo.png'))" />
 
     <link rel="icon" type="image/svg+xml" href="{{ asset('images/homeland-favicon.svg') }}">
-    @vite('resources/css/app.css') {{-- Tailwind via Vite --}}
-    @vite('resources/js/app.js') {{-- Alpine & app JS via Vite --}}
+    <link rel="stylesheet" href="{{ asset('build/assets/app-DzyQcuRG.css') }}">
+    <script src="{{ asset('build/assets/app-DtCVKgHt.js') }}" defer></script>
+{{--    @vite('resources/css/app.css') --}}{{-- Tailwind via Vite --}}
+{{--    @vite('resources/js/app.js') --}}{{-- Alpine & app JS via Vite --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     @stack('head')
     @if(!empty($adsenseClient))
