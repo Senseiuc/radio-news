@@ -46,8 +46,8 @@ Route::view('/live', 'live')->name('live');
 // Public Join Call page (Daily prebuilt)
 Route::get('/call', [CallController::class, 'join'])->name('call.join');
 
-//Route::get('/admin/call-room/{roomName}', CallRoom::class)
-//    ->name('filament.pages.call-room');
+Route::get('/admin/call-room/{roomName}', CallRoom::class)
+    ->name('filament.pages.call-room');
 
 Route::get('/deploy-test', function () {
     $output = shell_exec('sh /home/yehnypok/public_html/deploy.sh 2>&1');
